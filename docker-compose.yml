@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  app:
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - target=development
+    ports:
+      - '8000:8000'
+    volumes:
+      - .:/app
+    environment:
+      PORT: 8000
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: user
+      DB_PASSWORD: my-secret-pw
+      DB_NAME: reading_record
+  db:
+    image: mysql:8.0.31
+    restart: always
+    volumes:
+      - reading_record_db_data:/var/lib/mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_USER: user
+      MYSQL_PASSWORD: my-secret-pw
+      MYSQL_DATABASE: reading_record
+volumes:
+  reading_record_db_data:
