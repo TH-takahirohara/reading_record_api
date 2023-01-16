@@ -4,8 +4,9 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
-	"os"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 type config struct {
@@ -15,6 +16,7 @@ type config struct {
 
 type application struct {
 	config config
+	logger *logrus.Logger
 }
 
 func main() {
@@ -24,8 +26,13 @@ func main() {
 	flag.StringVar(&cfg.env, "env", "development", "Environment (development|staging|production)")
 	flag.Parse()
 
+	logger := logrus.New()
+	logger.SetFormatter(&logrus.JSONFormatter{})
+	logger.SetLevel(logrus.InfoLevel)
+
 	app := &application{
 		config: cfg,
+		logger: logger,
 	}
 
 	mux := http.NewServeMux()
@@ -41,7 +48,6 @@ func main() {
 
 	err := srv.ListenAndServe()
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		logger.Fatal(err)
 	}
 }
