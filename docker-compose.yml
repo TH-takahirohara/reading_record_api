@@ -23,6 +23,8 @@ services:
   db:
     image: mysql:8.0.31
     restart: always
+    ports:
+      - '33306:3306'
     volumes:
       - reading_record_db_data:/var/lib/mysql
     environment:
@@ -30,5 +32,20 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: my-secret-pw
       MYSQL_DATABASE: reading_record
+  migrate:
+    build: ./migrations
+    depends_on:
+      - db
+    command: ['up']
+    volumes:
+      - ./migrations/migrations:/migrations
+    environment:
+      WAIT_HOSTS: db:3306
+      MIGRATIONS_DIR: /migrations
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: user
+      DB_PASSWORD: my-secret-pw
+      DB_NAME: reading_record
 volumes:
   reading_record_db_data:
