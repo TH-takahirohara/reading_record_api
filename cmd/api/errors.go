@@ -10,7 +10,7 @@ func (app *application) logError(r *http.Request, err error) {
 	app.logger.WithFields(logrus.Fields{
 		"request_method": r.Method,
 		"request_url":    r.URL.String(),
-	})
+	}).Error(err)
 }
 
 func (app *application) errorResponse(w http.ResponseWriter, r *http.Request, status int, message any) {
