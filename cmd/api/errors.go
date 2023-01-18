@@ -26,6 +26,6 @@ func (app *application) errorResponse(w http.ResponseWriter, r *http.Request, st
 func (app *application) serverErrorResponse(w http.ResponseWriter, r *http.Request, err error) {
 	app.logError(r, err)
 
-	message := "サーバー側での処理において問題が発生しました。"
+	message := "サーバー側の処理において問題が発生しました。"
 	app.errorResponse(w, r, http.StatusInternalServerError, message)
 }
