@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/TH-takahirohara/reading_record_api/internal/data"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/sirupsen/logrus"
 )
@@ -13,6 +14,7 @@ import (
 type application struct {
 	config *Config
 	logger *logrus.Logger
+	models data.Models
 }
 
 func main() {
@@ -36,6 +38,7 @@ func main() {
 	app := &application{
 		config: cfg,
 		logger: logger,
+		models: data.NewModels(db),
 	}
 
 	err = app.serve()

@@ -100,7 +100,12 @@ func (m UserModel) Insert(user *User) error {
 
 	result, err := m.DB.ExecContext(ctx, query, args...)
 	if err != nil {
-		return err
+		switch {
+		case strings.Contains(err.Error(), "Duplicate entry"):
+			return ErrDuplicateEmail
+		default:
+			return err
+		}
 	}
 
 	id, err := result.LastInsertId()
