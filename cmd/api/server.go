@@ -36,7 +36,17 @@ func (app *application) serve() error {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 
-		shutdownError <- srv.Shutdown(ctx)
+		err := srv.Shutdown(ctx)
+		if err != nil {
+			shutdownError <- err
+		}
+
+		app.logger.WithFields(logrus.Fields{
+			"addr": srv.Addr,
+		}).Info("completing background tasks")
+
+		app.wg.Wait()
+		shutdownError <- nil
 	}()
 
 	app.logger.WithFields(logrus.Fields{

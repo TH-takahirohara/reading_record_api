@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/TH-takahirohara/reading_record_api/internal/data"
@@ -17,6 +18,7 @@ type application struct {
 	logger *logrus.Logger
 	models data.Models
 	mailer mailer.Mailer
+	wg     sync.WaitGroup
 }
 
 func main() {
