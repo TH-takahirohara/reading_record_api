@@ -15,6 +15,11 @@ type Config struct {
 	DBMaxOpenConns int    `env:"DB_MAX_OPEN_CONNS" envDefault:"10"`
 	DBMaxIdleConns int    `env:"DB_MAX_IDLE_CONNS" envDefault:"10"`
 	DBMaxIdleTime  string `env:"DB_MAX_IDLE_TIME" envDefault:"15m"`
+	SMTPHost       string `env:"SMTP_HOST" envDefault:"127.0.0.1"`
+	SMTPPort       int    `env:"SMTP_PORT" envDefault:"22225"`
+	SMTPUsername   string `env:"SMTP_USERNAME" envDefault:"smtpusername"`
+	SMTPPassword   string `env:"SMTP_PASSWORD" envDefault:"smtppassword"`
+	SMTPSender     string `env:"SMTP_SENDER" envDefault:"sender@example.com"`
 }
 
 func NewConfig() (*Config, error) {

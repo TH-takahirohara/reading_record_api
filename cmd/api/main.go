@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/TH-takahirohara/reading_record_api/internal/data"
+	"github.com/TH-takahirohara/reading_record_api/internal/mailer"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/sirupsen/logrus"
 )
@@ -15,6 +16,7 @@ type application struct {
 	config *Config
 	logger *logrus.Logger
 	models data.Models
+	mailer mailer.Mailer
 }
 
 func main() {
@@ -39,6 +41,7 @@ func main() {
 		config: cfg,
 		logger: logger,
 		models: data.NewModels(db),
+		mailer: mailer.New(cfg.SMTPHost, cfg.SMTPPort, cfg.SMTPUsername, cfg.SMTPPassword, cfg.SMTPSender),
 	}
 
 	err = app.serve()

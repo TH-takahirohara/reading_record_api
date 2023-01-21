@@ -1,0 +1,29 @@
+{{define "subject"}}読書記録アプリへようこそ{{end}}
+
+{{define "plainBody"}}
+こんにちは
+
+読書記録アプリにご登録いただきありがとうございます。
+
+あなたのIDは {{.ID}} になる予定です。
+
+読書記録アプリ 開発チーム
+{{end}}
+
+{{define "htmlBody"}}
+<!doctype html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width" />
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+
+<body>
+  <p>こんにちは</p>
+  <p>読書記録アプリにご登録いただきありがとうございます。</p>
+  <p>あなたのIDは {{.ID}} になる予定です。</p>
+  <p>読書記録アプリ 開発チーム</p>
+</body>
+
+</html>
+{{end}}
