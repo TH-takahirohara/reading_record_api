@@ -16,5 +16,5 @@ func (app *application) routes() http.Handler {
 
 	router.POST("/v1/tokens/authentication", app.createAuthenticationTokenHandler)
 
-	return router
+	return app.authenticate(router)
 }

@@ -47,3 +47,10 @@ func (app *application) invalidCredentialsResponse(w http.ResponseWriter, r *htt
 	message := "無効な認証情報です"
 	app.errorResponse(w, r, http.StatusUnauthorized, message)
 }
+
+func (app *application) invalidAuthenticationTokenResponse(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("WWW-Authenticate", "Bearer")
+
+	message := "認証トークンが含まれていないか、無効な値です"
+	app.errorResponse(w, r, http.StatusUnauthorized, message)
+}
