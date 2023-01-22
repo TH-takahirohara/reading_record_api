@@ -42,3 +42,8 @@ func (app *application) editConflictResponse(w http.ResponseWriter, r *http.Requ
 	message := "更新処理の競合が発生したため、更新に失敗しました。再度リクエストを実行してください"
 	app.errorResponse(w, r, http.StatusConflict, message)
 }
+
+func (app *application) invalidCredentialsResponse(w http.ResponseWriter, r *http.Request) {
+	message := "無効な認証情報です"
+	app.errorResponse(w, r, http.StatusUnauthorized, message)
+}

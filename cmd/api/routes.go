@@ -14,5 +14,7 @@ func (app *application) routes() http.Handler {
 	router.POST("/v1/users", app.registerUserHandler)
 	router.PUT("/v1/users/activated", app.activateUserHandler)
 
+	router.POST("/v1/tokens/authentication", app.createAuthenticationTokenHandler)
+
 	return router
 }
