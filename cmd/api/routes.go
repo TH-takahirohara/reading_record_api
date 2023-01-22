@@ -12,6 +12,7 @@ func (app *application) routes() http.Handler {
 	router.GET("/v1/healthcheck", app.healthcheckHandler)
 
 	router.POST("/v1/users", app.registerUserHandler)
+	router.PUT("/v1/users/activated", app.activateUserHandler)
 
 	return router
 }

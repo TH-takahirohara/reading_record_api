@@ -37,3 +37,8 @@ func (app *application) badRequestResponse(w http.ResponseWriter, r *http.Reques
 func (app *application) failedValidationResponse(w http.ResponseWriter, r *http.Request, errors map[string]string) {
 	app.errorResponse(w, r, http.StatusUnprocessableEntity, errors)
 }
+
+func (app *application) editConflictResponse(w http.ResponseWriter, r *http.Request) {
+	message := "更新処理の競合が発生したため、更新に失敗しました。再度リクエストを実行してください"
+	app.errorResponse(w, r, http.StatusConflict, message)
+}
