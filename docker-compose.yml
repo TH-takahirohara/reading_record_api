@@ -35,6 +35,7 @@ services:
       - '33306:3306'
     volumes:
       - reading_record_db_data:/var/lib/mysql
+      - $PWD/_tools/mysql/conf.d:/etc/mysql/conf.d:cached
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_USER: user
