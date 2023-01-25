@@ -6,10 +6,9 @@ import (
 
 	"github.com/TH-takahirohara/reading_record_api/internal/data"
 	"github.com/TH-takahirohara/reading_record_api/internal/validator"
-	"github.com/julienschmidt/httprouter"
 )
 
-func (app *application) createReadingsHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func (app *application) createReadingsHandler(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		BookName       string `json:"book_name"`
 		BookAuthor     string `json:"book_author"`

@@ -7,10 +7,9 @@ import (
 
 	"github.com/TH-takahirohara/reading_record_api/internal/data"
 	"github.com/TH-takahirohara/reading_record_api/internal/validator"
-	"github.com/julienschmidt/httprouter"
 )
 
-func (app *application) createAuthenticationTokenHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func (app *application) createAuthenticationTokenHandler(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`

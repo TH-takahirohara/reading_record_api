@@ -7,10 +7,9 @@ import (
 
 	"github.com/TH-takahirohara/reading_record_api/internal/data"
 	"github.com/TH-takahirohara/reading_record_api/internal/validator"
-	"github.com/julienschmidt/httprouter"
 )
 
-func (app *application) registerUserHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func (app *application) registerUserHandler(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		Name     string `json:"name"`
 		Email    string `json:"email"`
@@ -77,7 +76,7 @@ func (app *application) registerUserHandler(w http.ResponseWriter, r *http.Reque
 	}
 }
 
-func (app *application) activateUserHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func (app *application) activateUserHandler(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		TokenPlaintext string `json:"token"`
 	}
