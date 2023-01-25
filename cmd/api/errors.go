@@ -35,6 +35,16 @@ func (app *application) badRequestResponse(w http.ResponseWriter, r *http.Reques
 	app.errorResponse(w, r, http.StatusBadRequest, err.Error())
 }
 
+func (app *application) authenticationRequiredResponse(w http.ResponseWriter, r *http.Request) {
+	message := "このリソースにアクセスするためには認証が必要です"
+	app.errorResponse(w, r, http.StatusUnauthorized, message)
+}
+
+func (app *application) inactiveAccountResponse(w http.ResponseWriter, r *http.Request) {
+	message := "このリソースにアクセスするためにはユーザーアカウントの有効化が必要です"
+	app.errorResponse(w, r, http.StatusForbidden, message)
+}
+
 func (app *application) notFoundResponse(w http.ResponseWriter, r *http.Request) {
 	message := "要求されたリソースが見つかりませんでした"
 	app.errorResponse(w, r, http.StatusNotFound, message)
