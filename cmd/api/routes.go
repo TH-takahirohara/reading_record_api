@@ -19,5 +19,7 @@ func (app *application) routes() http.Handler {
 
 	router.POST("/v1/tokens/authentication", app.createAuthenticationTokenHandler)
 
+	router.POST("/v1/readings", app.createReadingsHandler)
+
 	return app.recoverPanic(app.logRequest(app.secureHeaders(app.authenticate(router))))
 }
