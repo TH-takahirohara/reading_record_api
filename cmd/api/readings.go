@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/TH-takahirohara/reading_record_api/internal/data"
@@ -39,12 +38,7 @@ func (app *application) createReadingsHandler(w http.ResponseWriter, r *http.Req
 
 	err = app.models.Readings.Insert(reading)
 	if err != nil {
-		switch {
-		case errors.Is(err, data.ErrEditConflict):
-			app.editConflictResponse(w, r)
-		default:
-			app.serverErrorResponse(w, r, err)
-		}
+		app.serverErrorResponse(w, r, err)
 		return
 	}
 

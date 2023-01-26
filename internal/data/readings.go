@@ -74,14 +74,6 @@ func (m ReadingModel) Insert(reading *Reading) error {
 		return err
 	}
 
-	n, err := result.RowsAffected()
-	if err != nil {
-		return err
-	}
-	if n == 0 {
-		return ErrEditConflict
-	}
-
 	id, err := result.LastInsertId()
 	if err != nil {
 		return err
