@@ -3,6 +3,7 @@ package data
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"time"
 	"unicode/utf8"
 
@@ -51,6 +52,51 @@ func ValidateReading(v *validator.Validator, reading *Reading) {
 
 type ReadingModel struct {
 	DB *sql.DB
+}
+
+func (m ReadingModel) Get(id int64, userID int64) (*Reading, error) {
+	if id < 1 {
+		return nil, ErrRecordNotFound
+	}
+
+	query := `
+		SELECT id, book_name, book_author, total_page_count, current_page, finished, memo, user_id, created_at, updated_at, version
+		FROM readings
+		WHERE id = ?
+	`
+
+	var reading Reading
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := m.DB.QueryRowContext(ctx, query, id).Scan(
+		&reading.ID,
+		&reading.BookName,
+		&reading.BookAuthor,
+		&reading.TotalPageCount,
+		&reading.CurrentPage,
+		&reading.Finished,
+		&reading.Memo,
+		&reading.UserID,
+		&reading.CreatedAt,
+		&reading.UpdatedAt,
+		&reading.Version,
+	)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, ErrRecordNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	if reading.UserID != userID {
+		return nil, ErrNotPermitted
+	}
+
+	return &reading, nil
 }
 
 func (m ReadingModel) Insert(reading *Reading) error {

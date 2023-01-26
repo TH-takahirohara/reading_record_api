@@ -20,6 +20,7 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodPost, "/v1/tokens/authentication", app.createAuthenticationTokenHandler)
 
 	router.HandlerFunc(http.MethodPost, "/v1/readings", app.requireActivatedUser(app.createReadingsHandler))
+	router.HandlerFunc(http.MethodGet, "/v1/readings/:id", app.requireActivatedUser(app.showReadingHandler))
 
 	return app.recoverPanic(app.logRequest(app.secureHeaders(app.authenticate(router))))
 }

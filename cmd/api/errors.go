@@ -45,6 +45,11 @@ func (app *application) inactiveAccountResponse(w http.ResponseWriter, r *http.R
 	app.errorResponse(w, r, http.StatusForbidden, message)
 }
 
+func (app *application) notPermittedResponse(w http.ResponseWriter, r *http.Request) {
+	message := "このリソースにアクセスするために必要な権限がありません"
+	app.errorResponse(w, r, http.StatusForbidden, message)
+}
+
 func (app *application) notFoundResponse(w http.ResponseWriter, r *http.Request) {
 	message := "要求されたリソースが見つかりませんでした"
 	app.errorResponse(w, r, http.StatusNotFound, message)
