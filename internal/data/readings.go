@@ -128,3 +128,48 @@ func (m ReadingModel) Insert(reading *Reading) error {
 	reading.ID = id
 	return nil
 }
+
+func (m ReadingModel) GetAll(userID int64) ([]*Reading, error) {
+	query := `
+		SELECT id, book_name, book_author, total_page_count, current_page, finished, memo, user_id, created_at, updated_at, version
+		FROM readings
+		WHERE user_id = ?
+	`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	rows, err := m.DB.QueryContext(ctx, query, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	readings := []*Reading{}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var reading Reading
+
+		err := rows.Scan(
+			&reading.ID,
+			&reading.BookName,
+			&reading.BookAuthor,
+			&reading.TotalPageCount,
+			&reading.CurrentPage,
+			&reading.Finished,
+			&reading.Memo,
+			&reading.UserID,
+			&reading.CreatedAt,
+			&reading.UpdatedAt,
+			&reading.Version,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		readings = append(readings, &reading)
+	}
+
+	return readings, nil
+}

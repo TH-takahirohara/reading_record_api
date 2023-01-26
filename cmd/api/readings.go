@@ -76,3 +76,18 @@ func (app *application) showReadingHandler(w http.ResponseWriter, r *http.Reques
 		app.serverErrorResponse(w, r, err)
 	}
 }
+
+func (app *application) listReadingsHandler(w http.ResponseWriter, r *http.Request) {
+	user := app.contextGetUser(r)
+
+	readings, err := app.models.Readings.GetAll(user.ID)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"readings": readings}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+}
