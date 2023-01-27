@@ -77,6 +77,67 @@ func (app *application) showReadingHandler(w http.ResponseWriter, r *http.Reques
 	}
 }
 
+func (app *application) updateReadingHandler(w http.ResponseWriter, r *http.Request) {
+	id, err := app.readIDParam(r)
+	if err != nil {
+		app.notFoundResponse(w, r)
+		return
+	}
+
+	user := app.contextGetUser(r)
+
+	reading, err := app.models.Readings.Get(id, user.ID)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+		case errors.Is(err, data.ErrNotPermitted):
+			app.notPermittedResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	var input struct {
+		BookName   *string `json:"book_name"`
+		BookAuthor *string `json:"book_author"`
+		Memo       *string `json:"memo"`
+	}
+
+	err = app.readJSON(w, r, &input)
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	if input.BookName != nil {
+		reading.BookName = *input.BookName
+	}
+	if input.BookAuthor != nil {
+		reading.BookAuthor = *input.BookAuthor
+	}
+	if input.Memo != nil {
+		reading.Memo = *input.Memo
+	}
+
+	err = app.models.Readings.Update(reading)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrEditConflict):
+			app.editConflictResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"reading": reading}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+}
+
 func (app *application) listReadingsHandler(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		data.Filters

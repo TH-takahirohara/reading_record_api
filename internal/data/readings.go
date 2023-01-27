@@ -129,6 +129,39 @@ func (m ReadingModel) Insert(reading *Reading) error {
 	return nil
 }
 
+func (m ReadingModel) Update(reading *Reading) error {
+	query := `
+		UPDATE readings SET book_name = ?, book_author = ?, memo = ?, version = version + 1
+		WHERE id = ? AND version = ?
+	`
+
+	args := []any{
+		reading.BookName,
+		reading.BookAuthor,
+		reading.Memo,
+		reading.ID,
+		reading.Version,
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	result, err := m.DB.ExecContext(ctx, query, args...)
+	if err != nil {
+		return err
+	}
+
+	n, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if n == 0 {
+		return ErrEditConflict
+	}
+
+	return nil
+}
+
 func (m ReadingModel) GetAll(userID int64, filters Filters) ([]*Reading, error) {
 	query := `
 		SELECT id, book_name, book_author, total_page_count, current_page, finished, memo, user_id, created_at, updated_at, version
