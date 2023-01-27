@@ -151,11 +151,11 @@ func (m ReadingModel) Update(reading *Reading) error {
 		return err
 	}
 
-	n, err := result.RowsAffected()
+	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return err
 	}
-	if n == 0 {
+	if rowsAffected == 0 {
 		return ErrEditConflict
 	}
 

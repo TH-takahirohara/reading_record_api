@@ -188,11 +188,11 @@ func (m UserModel) Update(user *User) error {
 		}
 	}
 
-	n, err := result.RowsAffected()
+	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return err
 	}
-	if n == 0 {
+	if rowsAffected == 0 {
 		return ErrEditConflict
 	}
 
