@@ -78,9 +78,25 @@ func (app *application) showReadingHandler(w http.ResponseWriter, r *http.Reques
 }
 
 func (app *application) listReadingsHandler(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		data.Filters
+	}
+
+	v := validator.New()
+
+	qs := r.URL.Query()
+
+	input.Filters.Page = app.readInt(qs, "page", 1, v)
+	input.Filters.PageSize = app.readInt(qs, "page_size", 20, v)
+
+	if data.ValidateFilters(v, input.Filters); !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
 	user := app.contextGetUser(r)
 
-	readings, err := app.models.Readings.GetAll(user.ID)
+	readings, err := app.models.Readings.GetAll(user.ID, input.Filters)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return

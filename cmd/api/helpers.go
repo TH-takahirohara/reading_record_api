@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 
+	"github.com/TH-takahirohara/reading_record_api/internal/validator"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -88,6 +90,22 @@ func (app *application) readJSON(w http.ResponseWriter, r *http.Request, dst any
 	}
 
 	return nil
+}
+
+func (app *application) readInt(qs url.Values, key string, defaultValue int, v *validator.Validator) int {
+	s := qs.Get(key)
+
+	if s == "" {
+		return defaultValue
+	}
+
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		v.AddError(key, "整数値である必要があります")
+		return defaultValue
+	}
+
+	return i
 }
 
 func (app *application) background(fn func()) {

@@ -129,17 +129,20 @@ func (m ReadingModel) Insert(reading *Reading) error {
 	return nil
 }
 
-func (m ReadingModel) GetAll(userID int64) ([]*Reading, error) {
+func (m ReadingModel) GetAll(userID int64, filters Filters) ([]*Reading, error) {
 	query := `
 		SELECT id, book_name, book_author, total_page_count, current_page, finished, memo, user_id, created_at, updated_at, version
 		FROM readings
 		WHERE user_id = ?
+		LIMIT ? OFFSET ?
 	`
+
+	args := []any{userID, filters.PageSize, filters.offset()}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	rows, err := m.DB.QueryContext(ctx, query, userID)
+	rows, err := m.DB.QueryContext(ctx, query, args...)
 	if err != nil {
 		return nil, err
 	}
