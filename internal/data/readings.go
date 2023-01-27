@@ -162,6 +162,30 @@ func (m ReadingModel) Update(reading *Reading) error {
 	return nil
 }
 
+func (m ReadingModel) Delete(id int64) error {
+	query := `
+		DELETE FROM readings where id = ?
+	`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	result, err := m.DB.ExecContext(ctx, query, id)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return ErrRecordNotFound
+	}
+
+	return nil
+}
+
 func (m ReadingModel) GetAll(userID int64, filters Filters) ([]*Reading, error) {
 	query := `
 		SELECT id, book_name, book_author, total_page_count, current_page, finished, memo, user_id, created_at, updated_at, version

@@ -138,6 +138,30 @@ func (app *application) updateReadingHandler(w http.ResponseWriter, r *http.Requ
 	}
 }
 
+func (app *application) deleteReadingHandler(w http.ResponseWriter, r *http.Request) {
+	id, err := app.readIDParam(r)
+	if err != nil {
+		app.notFoundResponse(w, r)
+		return
+	}
+
+	err = app.models.Readings.Delete(id)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"message": "successfully deleted"}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+}
+
 func (app *application) listReadingsHandler(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		data.Filters
