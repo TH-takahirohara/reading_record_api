@@ -187,9 +187,11 @@ func (m ReadingModel) Delete(id int64) error {
 
 func (m ReadingModel) GetAll(userID int64, filters Filters) ([]*Reading, error) {
 	query := `
-		SELECT id, book_name, book_author, total_page_count, current_page, finished, memo, user_id, created_at, updated_at, version
-		FROM readings
-		WHERE user_id = ?
+		SELECT r.id, r.book_name, r.book_author, r.total_page_count, COALESCE(MAX(dp.read_page), 0) AS current_page, r.finished, r.memo, r.user_id, r.created_at, r.updated_at, r.version
+		FROM readings r
+		LEFT OUTER JOIN daily_progresses dp ON r.id = dp.reading_id
+		WHERE r.user_id = ?
+		GROUP BY r.id
 		LIMIT ? OFFSET ?
 	`
 
