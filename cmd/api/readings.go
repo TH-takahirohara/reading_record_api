@@ -58,18 +58,28 @@ func (app *application) showReadingHandler(w http.ResponseWriter, r *http.Reques
 
 	user := app.contextGetUser(r)
 
-	reading, err := app.models.Readings.Get(id, user.ID)
+	reading, err := app.models.Readings.Get(id)
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrRecordNotFound):
 			app.notFoundResponse(w, r)
-		case errors.Is(err, data.ErrNotPermitted):
-			app.notPermittedResponse(w, r)
 		default:
 			app.serverErrorResponse(w, r, err)
 		}
 		return
 	}
+	if reading.UserID != user.ID {
+		app.notPermittedResponse(w, r)
+		return
+	}
+
+	dailyProgresses, err := app.models.DailyProgresses.GetAll(reading.ID)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	reading.DailyProgresses = dailyProgresses
 
 	err = app.writeJSON(w, http.StatusOK, envelope{"reading": reading}, nil)
 	if err != nil {
@@ -86,16 +96,18 @@ func (app *application) updateReadingHandler(w http.ResponseWriter, r *http.Requ
 
 	user := app.contextGetUser(r)
 
-	reading, err := app.models.Readings.Get(id, user.ID)
+	reading, err := app.models.Readings.Get(id)
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrRecordNotFound):
 			app.notFoundResponse(w, r)
-		case errors.Is(err, data.ErrNotPermitted):
-			app.notPermittedResponse(w, r)
 		default:
 			app.serverErrorResponse(w, r, err)
 		}
+		return
+	}
+	if reading.UserID != user.ID {
+		app.notPermittedResponse(w, r)
 		return
 	}
 

@@ -11,17 +11,18 @@ import (
 )
 
 type Reading struct {
-	ID             int64     `json:"id"`
-	BookName       string    `json:"book_name"`
-	BookAuthor     string    `json:"book_author"`
-	TotalPageCount int       `json:"total_page_count"`
-	CurrentPage    int       `json:"current_page"`
-	Finished       bool      `json:"finished"`
-	Memo           string    `json:"memo"`
-	UserID         int64     `json:"-"`
-	CreatedAt      time.Time `json:"-"`
-	UpdatedAt      time.Time `json:"-"`
-	Version        int64     `json:"-"`
+	ID              int64            `json:"id"`
+	BookName        string           `json:"book_name"`
+	BookAuthor      string           `json:"book_author"`
+	TotalPageCount  int              `json:"total_page_count"`
+	CurrentPage     int              `json:"current_page"`
+	Finished        bool             `json:"finished"`
+	Memo            string           `json:"memo"`
+	DailyProgresses []*DailyProgress `json:"daily_progresses"`
+	UserID          int64            `json:"-"`
+	CreatedAt       time.Time        `json:"-"`
+	UpdatedAt       time.Time        `json:"-"`
+	Version         int64            `json:"-"`
 }
 
 func ValidateBookName(v *validator.Validator, bookName string) {
@@ -54,15 +55,17 @@ type ReadingModel struct {
 	DB *sql.DB
 }
 
-func (m ReadingModel) Get(id int64, userID int64) (*Reading, error) {
+func (m ReadingModel) Get(id int64) (*Reading, error) {
 	if id < 1 {
 		return nil, ErrRecordNotFound
 	}
 
 	query := `
-		SELECT id, book_name, book_author, total_page_count, current_page, finished, memo, user_id, created_at, updated_at, version
-		FROM readings
-		WHERE id = ?
+		SELECT r.id, r.book_name, r.book_author, r.total_page_count, COALESCE(MAX(dp.read_page), 0) AS current_page, r.finished, r.memo, r.user_id, r.created_at, r.updated_at, r.version
+		FROM readings r
+		LEFT OUTER JOIN daily_progresses dp ON r.id = dp.reading_id
+		WHERE r.id = ?
+		GROUP BY r.id
 	`
 
 	var reading Reading
@@ -90,10 +93,6 @@ func (m ReadingModel) Get(id int64, userID int64) (*Reading, error) {
 		default:
 			return nil, err
 		}
-	}
-
-	if reading.UserID != userID {
-		return nil, ErrNotPermitted
 	}
 
 	return &reading, nil
