@@ -82,3 +82,50 @@ func (app *application) createDailyProgressHandler(w http.ResponseWriter, r *htt
 		return
 	}
 }
+
+func (app *application) deleteDailyProgressHandler(w http.ResponseWriter, r *http.Request) {
+	readingID, err := app.readIntParam(r, "reading_id")
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	dailyProgressID, err := app.readIntParam(r, "daily_progress_id")
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	user := app.contextGetUser(r)
+
+	reading, err := app.models.Readings.Get(readingID)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.badRequestResponse(w, r, err)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+	if reading.UserID != user.ID {
+		app.notPermittedResponse(w, r)
+		return
+	}
+
+	err = app.models.DailyProgresses.Delete(dailyProgressID)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"message": "successfully deleted"}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+}

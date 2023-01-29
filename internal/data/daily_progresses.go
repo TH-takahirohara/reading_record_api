@@ -114,3 +114,28 @@ func (m DailyProgressModel) GetAll(readingID int64) ([]*DailyProgress, error) {
 
 	return dailyProgresses, nil
 }
+
+func (m DailyProgressModel) Delete(id int64) error {
+	query := `
+		DELETE FROM daily_progresses
+		WHERE id = ?
+	`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	result, err := m.DB.ExecContext(ctx, query, id)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return ErrRecordNotFound
+	}
+
+	return nil
+}

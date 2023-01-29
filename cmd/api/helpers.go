@@ -25,6 +25,17 @@ func (app *application) readIDParam(r *http.Request) (int64, error) {
 	return id, nil
 }
 
+func (app *application) readIntParam(r *http.Request, key string) (int64, error) {
+	params := httprouter.ParamsFromContext(r.Context())
+
+	num, err := strconv.ParseInt(params.ByName(key), 10, 64)
+	if err != nil || num < 1 {
+		return 0, fmt.Errorf("invalid %s parameter", key)
+	}
+
+	return num, nil
+}
+
 type envelope map[string]any
 
 func (app *application) writeJSON(w http.ResponseWriter, status int, data envelope, headers http.Header) error {
