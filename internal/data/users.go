@@ -7,6 +7,7 @@ import (
 	"errors"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/TH-takahirohara/reading_record_api/internal/validator"
 	"golang.org/x/crypto/bcrypt"
@@ -77,7 +78,7 @@ func ValidatePasswordPlaintext(v *validator.Validator, password string) {
 
 func ValidateUser(v *validator.Validator, user *User) {
 	v.Check(user.Name != "", "name", "値を入力してください")
-	v.Check(len(user.Name) <= 60, "name", "60文字以下の文字列を入力してください")
+	v.Check(utf8.RuneCountInString(user.Name) <= 60, "name", "60文字以下の文字列を入力してください")
 
 	ValidateEmail(v, user.Email)
 

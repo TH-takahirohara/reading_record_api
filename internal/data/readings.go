@@ -27,12 +27,12 @@ type Reading struct {
 
 func ValidateBookName(v *validator.Validator, bookName string) {
 	v.Check(bookName != "", "book_name", "値を入力してください")
-	v.Check(len([]rune(bookName)) <= 500, "book_name", "500文字以内の文字列を入力してください")
+	v.Check(utf8.RuneCountInString(bookName) <= 500, "book_name", "500文字以内の文字列を入力してください")
 }
 
 func ValidateBookAuthor(v *validator.Validator, bookAuthor string) {
 	v.Check(bookAuthor != "", "book_author", "値を入力してください")
-	v.Check(len([]rune(bookAuthor)) <= 500, "book_author", "500文字以内の文字列を入力してください")
+	v.Check(utf8.RuneCountInString(bookAuthor) <= 500, "book_author", "500文字以内の文字列を入力してください")
 }
 
 func ValidateTotalPageCount(v *validator.Validator, totalPageCount int) {
