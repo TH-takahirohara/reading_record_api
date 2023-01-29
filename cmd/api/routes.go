@@ -25,8 +25,8 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodPatch, "/v1/readings/:id", app.requireActivatedUser(app.updateReadingHandler))
 	router.HandlerFunc(http.MethodDelete, "/v1/readings/:id", app.requireActivatedUser(app.deleteReadingHandler))
 
-	router.HandlerFunc(http.MethodPost, "/v1/readings/:id/daily_progresses", app.createDailyProgressHandler)
-	router.HandlerFunc(http.MethodDelete, "/v1/reading/:reading_id/daily_progresses/:daily_progress_id", app.deleteDailyProgressHandler)
+	router.HandlerFunc(http.MethodPost, "/v1/readings/:id/daily_progresses", app.requireActivatedUser(app.createDailyProgressHandler))
+	router.HandlerFunc(http.MethodDelete, "/v1/reading/:reading_id/daily_progresses/:daily_progress_id", app.requireActivatedUser(app.deleteDailyProgressHandler))
 
 	return app.recoverPanic(app.logRequest(app.secureHeaders(app.authenticate(router))))
 }
