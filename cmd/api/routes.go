@@ -28,5 +28,5 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodPost, "/v1/readings/:id/daily_progresses", app.requireActivatedUser(app.createDailyProgressHandler))
 	router.HandlerFunc(http.MethodDelete, "/v1/reading/:reading_id/daily_progresses/:daily_progress_id", app.requireActivatedUser(app.deleteDailyProgressHandler))
 
-	return app.recoverPanic(app.logRequest(app.secureHeaders(app.authenticate(router))))
+	return app.recoverPanic(app.enableCORS(app.logRequest(app.secureHeaders(app.authenticate(router)))))
 }

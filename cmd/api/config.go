@@ -20,6 +20,7 @@ type Config struct {
 	SMTPUsername   string `env:"SMTP_USERNAME" envDefault:"smtpusername"`
 	SMTPPassword   string `env:"SMTP_PASSWORD" envDefault:"smtppassword"`
 	SMTPSender     string `env:"SMTP_SENDER" envDefault:"sender@example.com"`
+	TrustedOrigins string `env:"TRUSTED_ORIGINS" envDefault:"http://localhost:3000"`
 }
 
 func NewConfig() (*Config, error) {

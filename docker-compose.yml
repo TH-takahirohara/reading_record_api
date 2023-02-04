@@ -28,6 +28,7 @@ services:
       SMTP_USERNAME: $SMTP_USERNAME
       SMTP_PASSWORD: $SMTP_PASSWORD
       SMTP_SENDER: $SMTP_SENDER
+      TRUSTED_ORIGINS: http://localhost:3000
   db:
     image: mysql:8.0.31
     restart: always
