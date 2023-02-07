@@ -192,6 +192,7 @@ func (m ReadingModel) GetAll(userID int64, filters Filters) ([]*Reading, Metadat
 		LEFT OUTER JOIN daily_progresses dp ON r.id = dp.reading_id
 		WHERE r.user_id = ?
 		GROUP BY r.id
+		ORDER BY id DESC
 		LIMIT ? OFFSET ?
 	`
 
