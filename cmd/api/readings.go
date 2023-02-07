@@ -193,13 +193,13 @@ func (app *application) listReadingsHandler(w http.ResponseWriter, r *http.Reque
 
 	user := app.contextGetUser(r)
 
-	readings, err := app.models.Readings.GetAll(user.ID, input.Filters)
+	readings, metadata, err := app.models.Readings.GetAll(user.ID, input.Filters)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
 	}
 
-	err = app.writeJSON(w, http.StatusOK, envelope{"readings": readings}, nil)
+	err = app.writeJSON(w, http.StatusOK, envelope{"readings": readings, "metadata": metadata}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}

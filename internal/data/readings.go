@@ -185,9 +185,9 @@ func (m ReadingModel) Delete(id int64) error {
 	return nil
 }
 
-func (m ReadingModel) GetAll(userID int64, filters Filters) ([]*Reading, error) {
+func (m ReadingModel) GetAll(userID int64, filters Filters) ([]*Reading, Metadata, error) {
 	query := `
-		SELECT r.id, r.book_name, r.book_author, r.total_page_count, COALESCE(MAX(dp.read_page), 0) AS current_page, r.finished, r.memo, r.user_id, r.created_at, r.updated_at, r.version
+		SELECT COUNT(*) OVER(), r.id, r.book_name, r.book_author, r.total_page_count, COALESCE(MAX(dp.read_page), 0) AS current_page, r.finished, r.memo, r.user_id, r.created_at, r.updated_at, r.version
 		FROM readings r
 		LEFT OUTER JOIN daily_progresses dp ON r.id = dp.reading_id
 		WHERE r.user_id = ?
@@ -195,16 +195,17 @@ func (m ReadingModel) GetAll(userID int64, filters Filters) ([]*Reading, error) 
 		LIMIT ? OFFSET ?
 	`
 
-	args := []any{userID, filters.PageSize, filters.offset()}
+	args := []any{userID, filters.limit(), filters.offset()}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	rows, err := m.DB.QueryContext(ctx, query, args...)
 	if err != nil {
-		return nil, err
+		return nil, Metadata{}, err
 	}
 
+	totalRecords := 0
 	readings := []*Reading{}
 
 	defer rows.Close()
@@ -213,6 +214,7 @@ func (m ReadingModel) GetAll(userID int64, filters Filters) ([]*Reading, error) 
 		var reading Reading
 
 		err := rows.Scan(
+			&totalRecords,
 			&reading.ID,
 			&reading.BookName,
 			&reading.BookAuthor,
@@ -226,11 +228,13 @@ func (m ReadingModel) GetAll(userID int64, filters Filters) ([]*Reading, error) 
 			&reading.Version,
 		)
 		if err != nil {
-			return nil, err
+			return nil, Metadata{}, err
 		}
 
 		readings = append(readings, &reading)
 	}
 
-	return readings, nil
+	metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
+
+	return readings, metadata, nil
 }

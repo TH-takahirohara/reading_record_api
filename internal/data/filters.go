@@ -1,6 +1,10 @@
 package data
 
-import "github.com/TH-takahirohara/reading_record_api/internal/validator"
+import (
+	"math"
+
+	"github.com/TH-takahirohara/reading_record_api/internal/validator"
+)
 
 type Filters struct {
 	Page     int
@@ -14,6 +18,32 @@ func ValidateFilters(v *validator.Validator, f Filters) {
 	v.Check(f.PageSize <= 100, "page_size", "100以下の値を指定してください")
 }
 
+func (f Filters) limit() int {
+	return f.PageSize
+}
+
 func (f Filters) offset() int {
 	return f.PageSize * (f.Page - 1)
+}
+
+type Metadata struct {
+	CurrentPage  int `json:"current_page,omitempty"`
+	PageSize     int `json:"page_size,omitempty"`
+	FirstPage    int `json:"first_page,omitempty"`
+	LastPage     int `json:"last_page,omitempty"`
+	TotalRecords int `json:"total_records,omitempty"`
+}
+
+func calculateMetadata(totalRecords, page, pageSize int) Metadata {
+	if totalRecords == 0 {
+		return Metadata{}
+	}
+
+	return Metadata{
+		CurrentPage:  page,
+		PageSize:     pageSize,
+		FirstPage:    1,
+		LastPage:     int(math.Ceil(float64(totalRecords) / float64(pageSize))),
+		TotalRecords: totalRecords,
+	}
 }
