@@ -12,13 +12,13 @@ import (
 
 type Reading struct {
 	ID              int64            `json:"id"`
-	BookName        string           `json:"book_name"`
-	BookAuthor      string           `json:"book_author"`
-	TotalPageCount  int              `json:"total_page_count"`
-	CurrentPage     int              `json:"current_page"`
+	BookName        string           `json:"bookName"`
+	BookAuthor      string           `json:"bookAuthor"`
+	TotalPageCount  int              `json:"totalPageCount"`
+	CurrentPage     int              `json:"currentPage"`
 	Finished        bool             `json:"finished"`
 	Memo            string           `json:"memo"`
-	DailyProgresses []*DailyProgress `json:"daily_progresses"`
+	DailyProgresses []*DailyProgress `json:"dailyProgresses"`
 	UserID          int64            `json:"-"`
 	CreatedAt       time.Time        `json:"-"`
 	UpdatedAt       time.Time        `json:"-"`

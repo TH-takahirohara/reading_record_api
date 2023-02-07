@@ -34,8 +34,8 @@ func (app *application) createDailyProgressHandler(w http.ResponseWriter, r *htt
 	}
 
 	var input struct {
-		ReadDate time.Time `json:"read_date"`
-		ReadPage int       `json:"read_page"`
+		ReadDate time.Time `json:"readDate"`
+		ReadPage int       `json:"readPage"`
 	}
 
 	err = app.readJSON(w, r, &input)
@@ -76,7 +76,7 @@ func (app *application) createDailyProgressHandler(w http.ResponseWriter, r *htt
 		return
 	}
 
-	err = app.writeJSON(w, http.StatusCreated, envelope{"daily_progress": dailyProgress}, nil)
+	err = app.writeJSON(w, http.StatusCreated, envelope{"dailyProgress": dailyProgress}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return

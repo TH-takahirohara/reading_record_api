@@ -10,9 +10,9 @@ import (
 
 func (app *application) createReadingsHandler(w http.ResponseWriter, r *http.Request) {
 	var input struct {
-		BookName       string `json:"book_name"`
-		BookAuthor     string `json:"book_author"`
-		TotalPageCount int    `json:"total_page_count"`
+		BookName       string `json:"bookName"`
+		BookAuthor     string `json:"bookAuthor"`
+		TotalPageCount int    `json:"totalPageCount"`
 	}
 
 	err := app.readJSON(w, r, &input)
@@ -112,8 +112,8 @@ func (app *application) updateReadingHandler(w http.ResponseWriter, r *http.Requ
 	}
 
 	var input struct {
-		BookName   *string `json:"book_name"`
-		BookAuthor *string `json:"book_author"`
+		BookName   *string `json:"bookName"`
+		BookAuthor *string `json:"bookAuthor"`
 		Memo       *string `json:"memo"`
 	}
 

@@ -9,8 +9,8 @@ import (
 
 type DailyProgress struct {
 	ID        int64     `json:"id"`
-	ReadDate  time.Time `json:"read_date"`
-	ReadPage  int       `json:"read_page"`
+	ReadDate  time.Time `json:"readDate"`
+	ReadPage  int       `json:"readPage"`
 	ReadingID int64     `json:"-"`
 	CreatedAt time.Time `json:"-"`
 	UpdatedAt time.Time `json:"-"`
