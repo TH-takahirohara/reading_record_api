@@ -59,11 +59,11 @@ func (app *application) createDailyProgressHandler(w http.ResponseWriter, r *htt
 	v := validator.New()
 
 	if latestDailyProgress != nil {
-		v.Check(dailyProgress.ReadDate.After(latestDailyProgress.ReadDate), "read_date", "最後に記録された日付より新しい日付を指定する必要があります")
-		v.Check(dailyProgress.ReadPage > latestDailyProgress.ReadPage, "read_page", "最後に記録されたページ番号より大きい値を指定する必要があります")
+		v.Check(dailyProgress.ReadDate.After(latestDailyProgress.ReadDate), "readDate", "最後に記録された日付より新しい日付を指定する必要があります")
+		v.Check(dailyProgress.ReadPage > latestDailyProgress.ReadPage, "readPage", "最後に記録されたページ番号より大きい値を指定する必要があります")
 	}
-	v.Check(dailyProgress.ReadPage > 0, "read_page", "ページ番号は0より大きい値を指定する必要があります")
-	v.Check(dailyProgress.ReadPage <= reading.TotalPageCount, "read_page", "ページ番号は総ページ数以下の値である必要があります")
+	v.Check(dailyProgress.ReadPage > 0, "readPage", "ページ番号は0より大きい値を指定する必要があります")
+	v.Check(dailyProgress.ReadPage <= reading.TotalPageCount, "readPage", "ページ番号は総ページ数以下の値である必要があります")
 
 	if !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)
