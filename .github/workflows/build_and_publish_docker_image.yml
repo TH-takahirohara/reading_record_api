@@ -3,7 +3,7 @@ name: Build and publish Docker image
 on:
   push:
     branches:
-      - test_ci_for_main
+      - main
 
 jobs:
   build:
