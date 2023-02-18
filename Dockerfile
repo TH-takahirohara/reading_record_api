@@ -14,7 +14,7 @@ RUN go build -ldflags "-s" -o=./api ./cmd/api
 # デプロイ用のコンテナ
 FROM ubuntu:22.04 as deploy
 
-RUN apt-get update && apt install -y ca-certificates
+RUN apt update && apt install -y ca-certificates
 
 COPY --from=deploy-builder /app/api .
 
