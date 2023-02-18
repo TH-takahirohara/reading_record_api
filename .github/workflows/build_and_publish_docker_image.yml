@@ -41,7 +41,9 @@ jobs:
         run: go install -tags 'mysql' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 
       - name: Migrate production database
-        run: migrate -path migrations/migrations -database ${{ secrets.DATABASE_URL }} up
+        env:
+          database_url: ${{ secrets.DATABASE_URL }}
+        run: migrate -path migrations/migrations -database "$database_url" up
 
   push_to_registry:
     name: Push Docker image to Docker Hub
