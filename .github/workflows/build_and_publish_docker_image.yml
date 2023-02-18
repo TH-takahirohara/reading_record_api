@@ -3,7 +3,7 @@ name: Build and publish Docker image
 on:
   push:
     branches:
-      - main
+      - test_ci_migrate
 
 jobs:
   build:
@@ -23,6 +23,21 @@ jobs:
 
       - name: Build
         run: go build -v cmd/api
+
+  migrate:
+    name: DB migration
+    runs-on: ubuntu-latest
+    environment: database
+    steps:
+      - name: Install golang-migrate
+        run: |
+          curl -L https://packagecloud.io/golang-migrate/migrate/gpgkey | apt-key add -
+          echo "deb https://packagecloud.io/golang-migrate/migrate/ubuntu/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/migrate.list
+          apt update
+          apt install -y migrate
+
+      - name: Migrate production database
+        run: migrate -path migrations/migrations -database ${{ secrets.DATABASE_URL }} up
 
   push_to_registry:
     name: Push Docker image to Docker Hub
