@@ -8,7 +8,7 @@ help:
 confirm:
 	@/bin/echo -n 'Are you sure? [y/N] ' && read ans && [ $${ans:-N} = y ]
 
-## audit: tidy and vendor dependencies and format, vet
+## audit: tidy, verify, format, and vet
 .PHONY: audit
 audit:
 	@echo 'Tidying and verifying module dependencies...'
